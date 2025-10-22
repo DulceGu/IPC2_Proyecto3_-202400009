@@ -1,0 +1,5 @@
+lista_recursos = []
+lista_categorias = []
+lista_clientes = []
+lista_consumos = []
+lista_facturas = []
