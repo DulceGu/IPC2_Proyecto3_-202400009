@@ -151,13 +151,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📋 Enviar Configuración</h1>
+            <h1> Enviar Configuración</h1>
             <p>Cargar archivo XML con la configuración del sistema</p>
         </div>
         
         <div class="content">
             <div class="upload-area" id="uploadArea">
-                <div>📄</div>
+                <div></div>
                 <h3>Seleccionar Archivo XML</h3>
                 <p>Haz clic aquí o arrastra un archivo XML de configuración</p>
                 <p><small>Formatos aceptados: .xml</small></p>
@@ -172,7 +172,7 @@
                 <span id="fileSize"></span>
             </div>
             
-            <button class="btn" id="uploadBtn" disabled>📤 Enviar Configuración</button>
+            <button class="btn" id="uploadBtn" disabled> Enviar Configuración</button>
             
             <div class="result" id="result"></div>
             
@@ -280,7 +280,7 @@
             formData.append('archivo_configuracion', fileInput.files[0]);
 
             uploadBtn.disabled = true;
-            uploadBtn.textContent = '⏳ Enviando...';
+            uploadBtn.textContent = ' Enviando...';
 
             try {
                 console.log("Enviando archivo al servidor...");
@@ -337,7 +337,7 @@
                     console.log("Respuesta no JSON:", text.substring(0, 200));
                     result.className = 'result error';
                     result.innerHTML = `
-                        <strong>❌ Error del servidor:</strong> El servidor devolvió una respuesta no JSON.<br>
+                        <strong> Error del servidor:</strong> El servidor devolvió una respuesta no JSON.<br>
                         <strong>Estado:</strong> ${response.status}<br>
                         <strong>Contenido:</strong><br>
                         <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px; overflow: auto; max-height: 200px;">${escapeHtml(text.substring(0, 1000))}</pre>
@@ -348,7 +348,7 @@
                 console.error("Error de conexión:", error);
                 result.className = 'result error';
                 result.innerHTML = `
-                    <strong>❌ Error de conexión:</strong> ${error.message}<br>
+                    <strong> Error de conexión:</strong> ${error.message}<br>
                     <strong>Verifica que:</strong><br>
                     • El backend esté ejecutándose en http://localhost:4000<br>
                     • No haya errores en la consola del backend

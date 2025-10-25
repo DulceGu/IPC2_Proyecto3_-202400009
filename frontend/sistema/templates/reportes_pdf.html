@@ -147,19 +147,19 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📈 Reportes en PDF</h1>
+            <h1> Reportes en PDF</h1>
             <p>Generar reportes detallados en formato PDF</p>
         </div>
         
         <div class="content">
             <div class="info-box">
-                <strong>💡 Información:</strong> 
+                <strong> Información:</strong> 
                 Genera reportes profesionales en formato PDF para análisis y documentación.
             </div>
             
             <!-- Reporte de Detalle de Factura -->
             <div class="report-section">
-                <h3>📄 Detalle de Factura</h3>
+                <h3> Detalle de Factura</h3>
                 <form id="detalleFacturaForm">
                     <div class="form-group">
                         <label for="numero_factura">Número de Factura *</label>
@@ -171,7 +171,7 @@
             
             <!-- Reporte de Análisis de Ventas -->
             <div class="report-section">
-                <h3>📊 Análisis de Ventas</h3>
+                <h3> Análisis de Ventas</h3>
                 <form id="analisisVentasForm">
                     <div class="form-group">
                         <label for="subtipo">Tipo de Análisis *</label>
@@ -248,10 +248,11 @@
                     'fecha_fin': fechaFin
                 };
             }
-            
+            console.log(" Enviando datos para PDF:", data);
+
             resultDiv.style.display = 'block';
             resultDiv.className = 'result success';
-            resultDiv.innerHTML = '<strong>⏳ Generando PDF...</strong>';
+            resultDiv.innerHTML = '<strong> Generando PDF...</strong>';
             
             fetch('{% url "generar_pdf" %}', {
                 method: 'POST',
@@ -260,7 +261,12 @@
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: new URLSearchParams(data)
+                body: JSON.stringify(data), //AQUI SE CAMBIA
+                headers: {
+                    'Content-Type': 'application/json',  // ← CAMBIAR ESTO
+                    'X-Requested-With': 'XMLHttpRequest', 
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
             })
             .then(response => {
                 if (response.ok && response.headers.get('content-type')?.includes('application/pdf')) {
@@ -281,11 +287,11 @@
                 window.URL.revokeObjectURL(url);
                 
                 resultDiv.className = 'result success';
-                resultDiv.innerHTML = '<strong>✅ PDF generado y descargado exitosamente.</strong>';
+                resultDiv.innerHTML = '<strong> PDF generado y descargado exitosamente.</strong>';
             })
             .catch(error => {
                 resultDiv.className = 'result error';
-                resultDiv.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+                resultDiv.innerHTML = `<strong> Error:</strong> ${error.message}`;
             });
         }
         

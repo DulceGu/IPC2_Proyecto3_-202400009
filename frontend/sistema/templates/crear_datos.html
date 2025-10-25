@@ -156,7 +156,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>➕ Crear {{ tipo|title }}</h1>
+            <h1> Crear {{ tipo|title }}</h1>
             <p>Agregar nuevo elemento al sistema</p>
         </div>
         
@@ -347,7 +347,7 @@
             </form>
             {% endif %}
             
-            <button class="btn" onclick="crearElemento()">💾 Crear {{ tipo|title }}</button>
+            <button class="btn" onclick="crearElemento()"> Crear {{ tipo|title }}</button>
             
             <div class="result" id="result"></div>
             
@@ -385,12 +385,12 @@
         }
         
         function crearElemento() {
-            console.log("🔍 === DEBUG INICIADO ===");
+            console.log(" === DEBUG INICIADO ===");
             const tipo = '{{ tipo }}';
             console.log("Tipo:", tipo);
             
             // Debug: mostrar todos los elementos del formulario
-            console.log("📋 Todos los inputs en la página:");
+            console.log(" Todos los inputs en la página:");
             const allInputs = document.querySelectorAll('input, textarea, select');
             allInputs.forEach((input, index) => {
                 console.log(`${index}. ${input.tagName} name="${input.name}" value="${input.value}" id="${input.id}"`);
@@ -445,7 +445,7 @@
                 }
                 
             } else {
-                console.log("🛠️ Recolectando datos para", tipo.toUpperCase());
+                console.log(" Recolectando datos para", tipo.toUpperCase());
                 const form = document.getElementById('createForm');
                 const formData = new FormData(form);
                 
@@ -454,26 +454,26 @@
                 }
             }
             
-            console.log("🎯 Datos finales a enviar:", JSON.stringify(data, null, 2));
+            console.log(" Datos finales a enviar:", JSON.stringify(data, null, 2));
             
             // Validación
-            console.log("🎯 Datos finales a enviar:", JSON.stringify(data, null, 2));
+            console.log(" Datos finales a enviar:", JSON.stringify(data, null, 2));
 
-// VALIDACIÓN CORREGIDA - Diferente para cada tipo
+// Validación de campos obligatorios
 let validationError = null;
 
 if (tipo === 'cliente') {
     if (!data.nit || !data.nombre) {
-        validationError = `❌ Faltan datos: NIT=${data.nit}, Nombre=${data.nombre}`;
+        validationError = ` Faltan datos: NIT=${data.nit}, Nombre=${data.nombre}`;
     }
 } else if (tipo === 'configuracion') {
     if (!data.id || !data.nombre || !data.id_categoria) {
-        validationError = `❌ Faltan datos: ID=${data.id}, Nombre=${data.nombre}, Categoría=${data.id_categoria}`;
+        validationError = ` Faltan datos: ID=${data.id}, Nombre=${data.nombre}, Categoría=${data.id_categoria}`;
     }
 } else {
     // Para recurso, categoria, instancia
     if (!data.id || !data.nombre) {
-        validationError = `❌ Faltan datos: ID=${data.id}, Nombre=${data.nombre}`;
+        validationError = ` Faltan datos: ID=${data.id}, Nombre=${data.nombre}`;
     }
 }
 
@@ -484,7 +484,7 @@ if (validationError) {
 }
             
             if (tipo === 'configuracion' && !data.id_categoria) {
-                const errorMsg = `❌ Falta ID de categoría: ${data.id_categoria}`;
+                const errorMsg = ` Falta ID de categoría: ${data.id_categoria}`;
                 console.error(errorMsg);
                 alert(errorMsg);
                 return;
@@ -500,7 +500,7 @@ if (validationError) {
             };
             
             const url = urls[tipo];
-            console.log("🚀 Enviando POST a:", url);
+            console.log(" Enviando POST a:", url);
             
             fetch(url, {
                 method: 'POST',
@@ -513,11 +513,11 @@ if (validationError) {
             })
             .then(response => response.json())
             .then(result => {
-                console.log("📨 Respuesta del servidor:", result);
-                // ... manejar resultado
+                console.log(" Respuesta del servidor:", result);
+                // Mostrar resultado
             })
             .catch(error => {
-                console.error("💥 Error:", error);
+                console.error(" Error:", error);
             });
         }
         

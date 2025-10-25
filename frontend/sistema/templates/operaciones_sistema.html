@@ -154,14 +154,14 @@
         
         <div class="operations-grid">
             <div class="operation-card card-reset">
-                <div>🔄</div>
+                <div></div>
                 <h3>Inicializar Sistema</h3>
                 <p>Eliminar todos los datos y comenzar desde cero</p>
                 <button class="btn" onclick="inicializarSistema()">Ejecutar</button>
             </div>
             
             <div class="operation-card card-consultar">
-                <div>📊</div>
+                <div></div>
                 <h3>Consultar Datos</h3>
                 <p>Ver información actual del sistema</p>
                 <select id="consultaTipo" class="btn" style="background: #27ae60; margin-bottom: 10px;">
@@ -176,7 +176,7 @@
             </div>
             
             <div class="operation-card card-crear">
-                <div>➕</div>
+                <div></div>
                 <h3>Crear Nuevos Datos</h3>
                 <p>Agregar nuevos elementos al sistema</p>
                 <select id="crearTipo" class="btn" style="background: #f39c12; margin-bottom: 10px;">
@@ -190,14 +190,14 @@
             </div>
             
             <div class="operation-card card-facturacion">
-                <div>🧾</div>
+                <div></div>
                 <h3>Proceso de Facturación</h3>
                 <p>Generar facturas por consumo de recursos</p>
                 <a href="{% url 'proceso_facturacion' %}" class="btn" style="background: #9b59b6;">Ir a Facturación</a>
             </div>
             
             <div class="operation-card card-reportes">
-                <div>📈</div>
+                <div></div>
                 <h3>Reportes en PDF</h3>
                 <p>Generar reportes detallados en formato PDF</p>
                 <a href="{% url 'reportes_pdf' %}" class="btn" style="background: #1abc9c;">Generar Reportes</a>

@@ -142,13 +142,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🧾 Proceso de Facturación</h1>
+            <h1> Proceso de Facturación</h1>
             <p>Generar facturas por consumo de recursos</p>
         </div>
         
         <div class="content">
             <div class="info-box">
-                <strong>💡 Información:</strong> 
+                <strong> Información:</strong> 
                 Este proceso generará facturas para todos los clientes que tengan consumos 
                 no facturados en el rango de fechas especificado.
             </div>
@@ -165,7 +165,7 @@
                 </div>
             </form>
             
-            <button class="btn" onclick="generarFacturas()">🧾 Generar Facturas</button>
+            <button class="btn" onclick="generarFacturas()"> Generar Facturas</button>
             
             <div class="result" id="result"></div>
             
@@ -176,7 +176,7 @@
     </div>
 
     <script>
-        // Establecer fechas por defecto (último mes)
+   
         const today = new Date();
         const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
         
@@ -202,6 +202,8 @@
                 'fecha_fin': fechaFin
             };
             
+            console.log(" Enviando datos:", data);
+
             fetch('{% url "generar_factura" %}', {
                 method: 'POST',
                 headers: {
@@ -209,9 +211,18 @@
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: new URLSearchParams(data)
+                body: JSON.stringify(data),  //AQUI SE CAMBIA
+
+                headers: {
+                    'Content-Type': 'application/json',  // ← CAMBIAR ESTO
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log(" Respuesta recibida, status:", response.status);
+                return response.json();
+            })
             .then(result => {
                 const resultDiv = document.getElementById('result');
                 resultDiv.style.display = 'block';
@@ -237,14 +248,14 @@
                     resultDiv.innerHTML = html;
                 } else {
                     resultDiv.className = 'result error';
-                    resultDiv.innerHTML = `<strong>❌ Error:</strong> ${result.mensaje}`;
+                    resultDiv.innerHTML = `<strong> Error:</strong> ${result.mensaje}`;
                 }
             })
             .catch(error => {
                 const resultDiv = document.getElementById('result');
                 resultDiv.style.display = 'block';
                 resultDiv.className = 'result error';
-                resultDiv.innerHTML = `<strong>❌ Error de conexión:</strong> ${error.message}`;
+                resultDiv.innerHTML = `<strong> Error de conexión:</strong> ${error.message}`;
             });
         }
         

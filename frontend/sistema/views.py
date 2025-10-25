@@ -82,6 +82,7 @@ def crear_datos(request):
     tipo = request.GET.get('tipo', 'recurso')
     return render(request, 'crear_datos.html', {'tipo': tipo})
 
+
 @csrf_exempt
 def crear_recurso(request):
     if request.method == 'POST':
@@ -189,11 +190,32 @@ def proceso_facturacion(request):
 def generar_factura(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body) if request.body else {}
+            print("🎯 === VISTA generar_factura LLAMADA ===")
             
-            response = requests.post(f'{settings.BACKEND_URL}/generarFactura', json=data)
+            # Para datos JSON
+            import json
+            if request.body:
+                data = json.loads(request.body)
+                print("📨 Datos JSON recibidos:", data)
+            else:
+                data = {}
+                print("⚠️ No se recibieron datos en el body")
+            
+            # Enviar al backend Flask
+            backend_url = f'{settings.BACKEND_URL}/generarFactura'
+            print(f"🚀 Enviando a: {backend_url}")
+            
+            response = requests.post(
+                backend_url, 
+                json=data,
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            print(f"📨 Respuesta del backend: {response.status_code}")
             return JsonResponse(response.json())
+            
         except Exception as e:
+            print(f"💥 Error en generar_factura: {e}")
             return JsonResponse({
                 'mensaje': f'Error al generar factura: {str(e)}',
                 'status': 500
@@ -208,21 +230,45 @@ def reportes_pdf(request):
 def generar_pdf(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body) if request.body else {}
+            print("🎯 === VISTA generar_pdf LLAMADA ===")
             
-            response = requests.post(f'{settings.BACKEND_URL}/generarPDF', json=data)
+            # Para datos JSON
+            import json
+            if request.body:
+                data = json.loads(request.body)
+                print("📨 Datos JSON recibidos para PDF:", data)
+            else:
+                data = {}
+                print("⚠️ No se recibieron datos en el body para PDF")
+            
+            # Enviar al backend Flask
+            backend_url = f'{settings.BACKEND_URL}/generarPDF'
+            response = requests.post(
+                backend_url, 
+                json=data,
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            print(f"📨 Respuesta del backend PDF: {response.status_code}")
             
             if response.status_code == 200:
-                pdf_response = HttpResponse(
-                    response.content,
-                    content_type='application/pdf'
-                )
-                pdf_response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
-                return pdf_response
+                # Si es un PDF, devolverlo directamente
+                if 'application/pdf' in response.headers.get('content-type', ''):
+                    pdf_response = HttpResponse(
+                        response.content,
+                        content_type='application/pdf'
+                    )
+                    filename = f"reporte_{data.get('tipo', 'general')}.pdf"
+                    pdf_response['Content-Disposition'] = f'attachment; filename="{filename}"'
+                    return pdf_response
+                else:
+                    # Si no es PDF, devolver como JSON
+                    return JsonResponse(response.json())
             else:
                 return JsonResponse(response.json())
                 
         except Exception as e:
+            print(f"💥 Error en generar_pdf: {e}")
             return JsonResponse({
                 'mensaje': f'Error al generar PDF: {str(e)}',
                 'status': 500

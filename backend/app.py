@@ -767,23 +767,62 @@ def crear_instancia():
 @app.route('/generarFactura', methods=['POST'])
 def generar_factura():
     try:
+        print("🎯 === SOLICITUD RECIBIDA EN /generarFactura ===")
+        print("📨 Headers:", dict(request.headers))
+        
+        # Verificar contenido
+        content_type = request.headers.get('Content-Type', '')
+        print(f"📋 Content-Type: {content_type}")
+        
+        raw_data = request.get_data(as_text=True)
+        print(f"📦 Datos crudos recibidos: '{raw_data}'")
+        
+        if not raw_data or raw_data.strip() == '':
+            return jsonify({
+                'mensaje': 'No se recibieron datos',
+                'status': 400
+            }), 400
+        
         data = request.get_json()
+        print("✅ Datos parseados:", data)
+        
+        if not data:
+            return jsonify({
+                'mensaje': 'No se pudieron parsear los datos JSON',
+                'status': 400
+            }), 400
+        
         fecha_inicio = data['fecha_inicio']
         fecha_fin = data['fecha_fin']
+        
+        print(f"📅 Rango de fechas: {fecha_inicio} a {fecha_fin}")
+        print(f"👥 Clientes totales: {len(lista_clientes)}")
+        print(f"📊 Consumos totales: {len(lista_consumos)}")
+        print(f"🧾 Facturas existentes: {len(lista_facturas)}")
         
         facturas_generadas = []
         
         # Procesar cada cliente
         for cliente in lista_clientes:
-            # Filtrar consumos del cliente en el rango de fechas
+            print(f"🔍 Procesando cliente: {cliente.nombre} (NIT: {cliente.nit})")
+            
+            # Filtrar consumos del cliente en el rango de fechas - CORREGIDO
             consumos_cliente = []
             for consumo in lista_consumos:
-                if (consumo.nit_cliente == cliente.nit and 
-                    consumo.fecha_hora and 
-                    fecha_inicio <= consumo.fecha_hora.strftime('%Y-%m-%d') <= fecha_fin):
-                    consumos_cliente.append(consumo)
+                if consumo.nit_cliente == cliente.nit and consumo.fecha_hora:
+                    try:
+                        fecha_consumo = consumo.fecha_hora.strftime('%Y-%m-%d')
+                        if fecha_inicio <= fecha_consumo <= fecha_fin:
+                            consumos_cliente.append(consumo)
+                            print(f"✅ Consumo incluido: {consumo.nit_cliente} - Instancia {consumo.id_instancia} - {fecha_consumo} - {consumo.tiempo} hrs")
+                    except Exception as e:
+                        print(f"❌ Error procesando fecha de consumo: {e}")
+                        continue
+            
+            print(f"📊 Consumos encontrados para {cliente.nombre}: {len(consumos_cliente)}")
             
             if not consumos_cliente:
+                print(f"⏭️  Saltando cliente {cliente.nombre} - sin consumos en el rango")
                 continue
             
             # Crear factura para el cliente
@@ -792,9 +831,12 @@ def generar_factura():
             contador_facturas += 1
             
             factura = Factura(factura_numero, cliente.nit, fecha_fin)
+            print(f"🧾 Creando factura {factura_numero} para {cliente.nombre}")
             
             # Procesar cada consumo
             for consumo in consumos_cliente:
+                print(f"  📋 Procesando consumo: Instancia {consumo.id_instancia}, {consumo.tiempo} hrs")
+                
                 # Buscar la instancia
                 instancia = None
                 for cli in lista_clientes:
@@ -806,7 +848,10 @@ def generar_factura():
                         break
                 
                 if not instancia:
+                    print(f"  ❌ Instancia {consumo.id_instancia} no encontrada")
                     continue
+                
+                print(f"  ✅ Instancia encontrada: {instancia.nombre}")
                 
                 # Buscar la configuración de la instancia
                 configuracion = None
@@ -819,14 +864,18 @@ def generar_factura():
                         break
                 
                 if not configuracion:
+                    print(f"  ❌ Configuración {instancia.id_configuracion} no encontrada")
                     continue
+                
+                print(f"  ✅ Configuración encontrada: {configuracion.nombre}")
+                print(f"  🔧 Recursos en configuración: {configuracion.recursos}")
                 
                 # Calcular costos por recurso
                 for recurso_id, cantidad in configuracion.recursos.items():
                     # Buscar el recurso
                     recurso = next((r for r in lista_recursos if r.id == recurso_id), None)
                     if recurso:
-                        subtotal = float(cantidad) * consumo.tiempo * recurso.valor_x_hora
+                        subtotal = float(cantidad) * consumo.tiempo * float(recurso.valor_x_hora)
                         
                         detalle = {
                             'id_instancia': instancia.id,
@@ -835,10 +884,13 @@ def generar_factura():
                             'nombre_recurso': recurso.nombre,
                             'cantidad': cantidad,
                             'tiempo': consumo.tiempo,
-                            'valor_x_hora': recurso.valor_x_hora,
+                            'valor_x_hora': float(recurso.valor_x_hora),
                             'subtotal': subtotal
                         }
                         factura.agregar_detalle(detalle)
+                        print(f"  💰 Recurso {recurso.nombre}: {cantidad} x {consumo.tiempo} hrs x Q{recurso.valor_x_hora} = Q{subtotal:.2f}")
+                    else:
+                        print(f"  ❌ Recurso {recurso_id} no encontrado")
             
             if factura.detalles:
                 lista_facturas.append(factura)
@@ -847,8 +899,17 @@ def generar_factura():
                     'cliente': cliente.nombre,
                     'monto': factura.monto_total
                 })
+                print(f"✅ Factura {factura.numero} creada: Q{factura.monto_total:.2f}")
+            else:
+                print(f"⚠️  Factura {factura.numero} sin detalles - no se agregará")
         
         db.guardar_datos()
+        
+        print("🎉 === RESUMEN DE FACTURACIÓN ===")
+        print(f"📈 Facturas generadas: {len(facturas_generadas)}")
+        for fact in facturas_generadas:
+            print(f"   - {fact['numero']}: {fact['cliente']} - Q{fact['monto']:.2f}")
+        print("=================================")
         
         return jsonify({
             'mensaje': 'Facturas generadas exitosamente',
@@ -857,11 +918,20 @@ def generar_factura():
         }), 200
     
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print("💥 === ERROR CRÍTICO EN GENERAR_FACTURA ===")
+        print(f"Error: {str(e)}")
+        print("Traceback:")
+        print(error_details)
+        print("===========================================")
+        
         return jsonify({
             'mensaje': f'Error al generar facturas: {str(e)}',
+            'detalles': error_details,
             'status': 500
         }), 500
-
+    
 # Endpoint para generar PDF
 @app.route('/generarPDF', methods=['POST'])
 def generar_pdf():
