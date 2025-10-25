@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear {{ tipo|title }} - Tecnologías Chapinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #f39c12;
+            outline: none;
+        }
+        
+        .btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            background: #e67e22;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .resource-item {
+            background: #ecf0f1;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .add-resource {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>➕ Crear {{ tipo|title }}</h1>
+            <p>Agregar nuevo elemento al sistema</p>
+        </div>
+        
+        <div class="content">
+            {% if tipo == 'recurso' %}
+            <form id="createForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id">ID del Recurso *</label>
+                        <input type="text" id="id" name="id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="abreviatura">Abreviatura *</label>
+                        <input type="text" id="abreviatura" name="abreviatura" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="metrica">Métrica *</label>
+                        <input type="text" id="metrica" name="metrica" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo *</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="Hardware">Hardware</option>
+                            <option value="Software">Software</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="valor_x_hora">Valor por Hora (Q) *</label>
+                        <input type="number" id="valor_x_hora" name="valor_x_hora" step="0.01" min="0" required>
+                    </div>
+                </div>
+            </form>
+            
+            {% elif tipo == 'categoria' %}
+            <form id="createForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id">ID de la Categoría *</label>
+                        <input type="text" id="id" name="id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="descripcion">Descripción *</label>
+                    <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="carga_trabajo">Carga de Trabajo *</label>
+                    <input type="text" id="carga_trabajo" name="carga_trabajo" required>
+                </div>
+            </form>
+            
+            {% elif tipo == 'configuracion' %}
+<form id="createForm">
+    <div class="form-row">
+        <div class="form-group">
+            <label for="config_id">ID de la Configuración *</label>
+            <input type="text" id="config_id" name="id" required>
+        </div>
+        <div class="form-group">
+            <label for="config_categoria">ID de la Categoría *</label>
+            <input type="text" id="config_categoria" name="id_categoria" required>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="config_nombre">Nombre *</label>
+        <input type="text" id="config_nombre" name="nombre" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="config_descripcion">Descripción *</label>
+        <textarea id="config_descripcion" name="descripcion" rows="3" required></textarea>
+    </div>
+    
+    <div class="form-group">
+        <label>Recursos de la Configuración</label>
+        <div id="recursosContainer">
+            <div class="resource-item">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ID del Recurso</label>
+                        <input type="text" name="recurso_id_0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input type="number" name="recurso_cantidad_0" step="0.01" min="0" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="add-resource" onclick="addResource()">+ Agregar Recurso</button>
+    </div>
+</form>
+
+            
+            {% elif tipo == 'cliente' %}
+            <form id="createForm">
+                <div class="form-group">
+                    <label for="nit">NIT * (Formato: 12345-6)</label>
+                    <input type="text" id="nit" name="nit" pattern="[0-9]+[-][0-9Kk]" title="Formato: 12345-6" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo *</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="usuario">Usuario *</label>
+                        <input type="text" id="usuario" name="usuario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="clave">Clave *</label>
+                        <input type="password" id="clave" name="clave" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="direccion">Dirección *</label>
+                    <input type="text" id="direccion" name="direccion" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="correo_electronico">Correo Electrónico *</label>
+                    <input type="email" id="correo_electronico" name="correo_electronico" required>
+                </div>
+            </form>
+            
+            {% elif tipo == 'instancia' %}
+            <form id="createForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id">ID de la Instancia *</label>
+                        <input type="text" id="id" name="id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nit_cliente">NIT del Cliente *</label>
+                        <input type="text" id="nit_cliente" name="nit_cliente" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_configuracion">ID de la Configuración *</label>
+                        <input type="text" id="id_configuracion" name="id_configuracion" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre de la Instancia *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha_inicio">Fecha de Inicio * (dd/mm/aaaa)</label>
+                        <input type="text" id="fecha_inicio" name="fecha_inicio" placeholder="15/10/2025" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado">
+                            <option value="Vigente">Vigente</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha_final">Fecha Final (si está cancelada)</label>
+                    <input type="text" id="fecha_final" name="fecha_final" placeholder="20/10/2025">
+                </div>
+            </form>
+            {% endif %}
+            
+            <button class="btn" onclick="crearElemento()">💾 Crear {{ tipo|title }}</button>
+            
+            <div class="result" id="result"></div>
+            
+            <div class="back-button">
+                <a href="{% url 'operaciones_sistema' %}" class="btn btn-secondary">← Volver a Operaciones</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let resourceCount = 1;
+        
+        function addResource() {
+            const container = document.getElementById('recursosContainer');
+            if (!container) return;
+            
+            const currentCount = container.children.length;
+            
+            const newResource = document.createElement('div');
+            newResource.className = 'resource-item';
+            newResource.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ID del Recurso</label>
+                        <input type="text" name="recurso_id_${currentCount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input type="number" name="recurso_cantidad_${currentCount}" step="0.01" min="0" required>
+                    </div>
+                </div>
+                <button type="button" class="add-resource" style="background: #e74c3c;" onclick="this.parentElement.remove()">- Eliminar</button>
+            `;
+            container.appendChild(newResource);
+        }
+        
+        function crearElemento() {
+            console.log("🔍 === DEBUG INICIADO ===");
+            const tipo = '{{ tipo }}';
+            console.log("Tipo:", tipo);
+            
+            // Debug: mostrar todos los elementos del formulario
+            console.log("📋 Todos los inputs en la página:");
+            const allInputs = document.querySelectorAll('input, textarea, select');
+            allInputs.forEach((input, index) => {
+                console.log(`${index}. ${input.tagName} name="${input.name}" value="${input.value}" id="${input.id}"`);
+            });
+            
+            let data = {};
+            
+            if (tipo === 'configuracion') {
+                console.log("🛠️ Recolectando datos para CONFIGURACIÓN");
+                
+                // Recolectar datos básicos de manera explícita
+                const idInput = document.querySelector('input[name="id"]');
+                const nombreInput = document.querySelector('input[name="nombre"]');
+                const descripcionInput = document.querySelector('textarea[name="descripcion"]');
+                const idCategoriaInput = document.querySelector('input[name="id_categoria"]');
+                
+                console.log("📍 Elementos encontrados:");
+                console.log(" - idInput:", idInput, "value:", idInput?.value);
+                console.log(" - nombreInput:", nombreInput, "value:", nombreInput?.value);
+                console.log(" - descripcionInput:", descripcionInput, "value:", descripcionInput?.value);
+                console.log(" - idCategoriaInput:", idCategoriaInput, "value:", idCategoriaInput?.value);
+                
+                data = {
+                    id: idInput?.value || null,
+                    nombre: nombreInput?.value || null,
+                    descripcion: descripcionInput?.value || null,
+                    id_categoria: idCategoriaInput?.value || null,
+                    recursos: []
+                };
+                
+                console.log("📦 Datos básicos:", data);
+                
+                // Recolectar recursos
+                console.log("🔄 Buscando recursos...");
+                let i = 0;
+                while (i < 10) { // límite de seguridad
+                    const recursoId = document.querySelector(`input[name="recurso_id_${i}"]`);
+                    const recursoCantidad = document.querySelector(`input[name="recurso_cantidad_${i}"]`);
+                    
+                    console.log(`🔍 Recurso ${i}:`, recursoId?.value, recursoCantidad?.value);
+                    
+                    if (!recursoId || !recursoCantidad) break;
+                    
+                    if (recursoId.value && recursoCantidad.value) {
+                        data.recursos.push({
+                            id: recursoId.value,
+                            cantidad: recursoCantidad.value
+                        });
+                        console.log(`✅ Recurso ${i} agregado:`, recursoId.value, recursoCantidad.value);
+                    }
+                    i++;
+                }
+                
+            } else {
+                console.log("🛠️ Recolectando datos para", tipo.toUpperCase());
+                const form = document.getElementById('createForm');
+                const formData = new FormData(form);
+                
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+            }
+            
+            console.log("🎯 Datos finales a enviar:", JSON.stringify(data, null, 2));
+            
+            // Validación
+            console.log("🎯 Datos finales a enviar:", JSON.stringify(data, null, 2));
+
+// VALIDACIÓN CORREGIDA - Diferente para cada tipo
+let validationError = null;
+
+if (tipo === 'cliente') {
+    if (!data.nit || !data.nombre) {
+        validationError = `❌ Faltan datos: NIT=${data.nit}, Nombre=${data.nombre}`;
+    }
+} else if (tipo === 'configuracion') {
+    if (!data.id || !data.nombre || !data.id_categoria) {
+        validationError = `❌ Faltan datos: ID=${data.id}, Nombre=${data.nombre}, Categoría=${data.id_categoria}`;
+    }
+} else {
+    // Para recurso, categoria, instancia
+    if (!data.id || !data.nombre) {
+        validationError = `❌ Faltan datos: ID=${data.id}, Nombre=${data.nombre}`;
+    }
+}
+
+if (validationError) {
+    console.error(validationError);
+    alert(validationError);
+    return;
+}
+            
+            if (tipo === 'configuracion' && !data.id_categoria) {
+                const errorMsg = `❌ Falta ID de categoría: ${data.id_categoria}`;
+                console.error(errorMsg);
+                alert(errorMsg);
+                return;
+            }
+            
+            // Enviar datos
+            const urls = {
+                'recurso': '{% url "crear_recurso" %}',
+                'categoria': '{% url "crear_categoria" %}', 
+                'configuracion': '{% url "crear_configuracion" %}',
+                'cliente': '{% url "crear_cliente" %}',
+                'instancia': '{% url "crear_instancia" %}'
+            };
+            
+            const url = urls[tipo];
+            console.log("🚀 Enviando POST a:", url);
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log("📨 Respuesta del servidor:", result);
+                // ... manejar resultado
+            })
+            .catch(error => {
+                console.error("💥 Error:", error);
+            });
+        }
+        
+        function resetForm() {
+            const form = document.getElementById('createForm');
+            const resultDiv = document.getElementById('result');
+            
+            if (form) form.reset();
+            if (resultDiv) resultDiv.style.display = 'none';
+            
+            // Resetear contador de recursos
+            resourceCount = 1;
+            const recursosContainer = document.getElementById('recursosContainer');
+            if (recursosContainer) {
+                recursosContainer.innerHTML = `
+                    <div class="resource-item">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ID del Recurso</label>
+                                <input type="text" name="recursos[0][id]" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Cantidad</label>
+                                <input type="number" name="recursos[0][cantidad]" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Inicializar cuando la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Página de creación cargada, tipo: {{ tipo }}");
+            const resultDiv = document.getElementById('result');
+            if (resultDiv) {
+                resultDiv.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

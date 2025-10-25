@@ -1,16 +1,17 @@
-from django.shortcuts import render
-
 import requests
+import json
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     return render(request, 'index.html')
 
+@csrf_exempt
 def enviar_configuracion(request):
-    if request.method == 'POST' and request.FILES.get('archivo'):
-        archivo = request.FILES['archivo']
+    if request.method == 'POST' and request.FILES.get('archivo_configuracion'):
+        archivo = request.FILES['archivo_configuracion']
         
         try:
             response = requests.post(
@@ -26,9 +27,10 @@ def enviar_configuracion(request):
     
     return render(request, 'enviar_configuracion.html')
 
+@csrf_exempt
 def enviar_consumo(request):
-    if request.method == 'POST' and request.FILES.get('archivo'):
-        archivo = request.FILES['archivo']
+    if request.method == 'POST' and request.FILES.get('archivo_consumo'):
+        archivo = request.FILES['archivo_consumo']
         
         try:
             response = requests.post(
@@ -47,6 +49,7 @@ def enviar_consumo(request):
 def operaciones_sistema(request):
     return render(request, 'operaciones_sistema.html')
 
+@csrf_exempt
 def inicializar_sistema(request):
     if request.method == 'POST':
         try:
@@ -75,19 +78,21 @@ def consultar_datos(request):
     
     return JsonResponse({'mensaje': 'Método no permitido', 'status': 405})
 
+def crear_datos(request):
+    tipo = request.GET.get('tipo', 'recurso')
+    return render(request, 'crear_datos.html', {'tipo': tipo})
+
+@csrf_exempt
 def crear_recurso(request):
     if request.method == 'POST':
         try:
-            data = {
-                'id': request.POST.get('id'),
-                'nombre': request.POST.get('nombre'),
-                'abreviatura': request.POST.get('abreviatura'),
-                'metrica': request.POST.get('metrica'),
-                'tipo': request.POST.get('tipo'),
-                'valor_x_hora': request.POST.get('valor_x_hora')
-            }
+            data = json.loads(request.body) if request.body else {}
+            print("📦 Datos recurso:", data)
             
-            response = requests.post(f'{settings.BACKEND_URL}/crearRecurso', json=data)
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crearRecurso',
+                json=data
+            )
             return JsonResponse(response.json())
         except Exception as e:
             return JsonResponse({
@@ -95,17 +100,96 @@ def crear_recurso(request):
                 'status': 500
             })
     
-    return render(request, 'crear_recurso.html')
+    return JsonResponse({'mensaje': 'Método no permitido', 'status': 405})
 
-# Similar para crear_categoria, crear_configuracion, crear_cliente, crear_instancia
+@csrf_exempt
+def crear_categoria(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body) if request.body else {}
+            print("📦 Datos categoría:", data)
+            
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crearCategoria',
+                json=data
+            )
+            return JsonResponse(response.json())
+        except Exception as e:
+            return JsonResponse({
+                'mensaje': f'Error al crear categoría: {str(e)}',
+                'status': 500
+            })
+    
+    return JsonResponse({'mensaje': 'Método no permitido', 'status': 405})
 
+@csrf_exempt
+def crear_configuracion(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body) if request.body else {}
+            print("📦 Datos configuración:", data)
+            
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crearConfiguracion',
+                json=data
+            )
+            return JsonResponse(response.json())
+        except Exception as e:
+            return JsonResponse({
+                'mensaje': f'Error al crear configuración: {str(e)}',
+                'status': 500
+            })
+    
+    return JsonResponse({'mensaje': 'Método no permitido', 'status': 405})
+
+@csrf_exempt
+def crear_cliente(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body) if request.body else {}
+            print("📦 Datos cliente:", data)
+            
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crearCliente',
+                json=data
+            )
+            return JsonResponse(response.json())
+        except Exception as e:
+            return JsonResponse({
+                'mensaje': f'Error al crear cliente: {str(e)}',
+                'status': 500
+            })
+    
+    return JsonResponse({'mensaje': 'Método no permitido', 'status': 405})
+
+@csrf_exempt
+def crear_instancia(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body) if request.body else {}
+            print("📦 Datos instancia:", data)
+            
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crearInstancia',
+                json=data
+            )
+            return JsonResponse(response.json())
+        except Exception as e:
+            return JsonResponse({
+                'mensaje': f'Error al crear instancia: {str(e)}',
+                'status': 500
+            })
+    
+    return JsonResponse({'mensaje': 'Método no permitido', 'status': 405})
+
+def proceso_facturacion(request):
+    return render(request, 'proceso_facturacion.html')
+
+@csrf_exempt
 def generar_factura(request):
     if request.method == 'POST':
         try:
-            data = {
-                'fecha_inicio': request.POST.get('fecha_inicio'),
-                'fecha_fin': request.POST.get('fecha_fin')
-            }
+            data = json.loads(request.body) if request.body else {}
             
             response = requests.post(f'{settings.BACKEND_URL}/generarFactura', json=data)
             return JsonResponse(response.json())
@@ -115,7 +199,36 @@ def generar_factura(request):
                 'status': 500
             })
     
-    return render(request, 'generar_factura.html')
+    return JsonResponse({'mensaje': 'Método no permitido', 'status': 405})
+
+def reportes_pdf(request):
+    return render(request, 'reportes_pdf.html')
+
+@csrf_exempt
+def generar_pdf(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body) if request.body else {}
+            
+            response = requests.post(f'{settings.BACKEND_URL}/generarPDF', json=data)
+            
+            if response.status_code == 200:
+                pdf_response = HttpResponse(
+                    response.content,
+                    content_type='application/pdf'
+                )
+                pdf_response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
+                return pdf_response
+            else:
+                return JsonResponse(response.json())
+                
+        except Exception as e:
+            return JsonResponse({
+                'mensaje': f'Error al generar PDF: {str(e)}',
+                'status': 500
+            })
+    
+    return JsonResponse({'mensaje': 'Método no permitido', 'status': 405})
 
 def info_estudiante(request):
     try:
@@ -123,9 +236,9 @@ def info_estudiante(request):
         return JsonResponse(response.json())
     except Exception as e:
         return JsonResponse({
-            'nombre': 'Estudiante',
-            'carnet': '00000000',
-            'curso': 'IPC2'
+            'nombre': 'Dulce María Rodas Martínez',
+            'carnet': '202100312',
+            'curso': 'IPC2 - Sección D'
         })
 
 def ayuda(request):

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes PDF - Tecnologías Chapinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .report-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+        }
+        
+        .report-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #1abc9c;
+            outline: none;
+        }
+        
+        .btn {
+            background: #1abc9c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            background: #16a085;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .info-box {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Reportes en PDF</h1>
+            <p>Generar reportes detallados en formato PDF</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                <strong>💡 Información:</strong> 
+                Genera reportes profesionales en formato PDF para análisis y documentación.
+            </div>
+            
+            <!-- Reporte de Detalle de Factura -->
+            <div class="report-section">
+                <h3>📄 Detalle de Factura</h3>
+                <form id="detalleFacturaForm">
+                    <div class="form-group">
+                        <label for="numero_factura">Número de Factura *</label>
+                        <input type="text" id="numero_factura" name="numero_factura" placeholder="F-000001" required>
+                    </div>
+                    <button type="button" class="btn" onclick="generarPDF('detalle_factura')">📥 Generar PDF</button>
+                </form>
+            </div>
+            
+            <!-- Reporte de Análisis de Ventas -->
+            <div class="report-section">
+                <h3>📊 Análisis de Ventas</h3>
+                <form id="analisisVentasForm">
+                    <div class="form-group">
+                        <label for="subtipo">Tipo de Análisis *</label>
+                        <select id="subtipo" name="subtipo" required>
+                            <option value="categorias">Categorías y Configuraciones</option>
+                            <option value="recursos">Recursos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha_inicio_analisis">Fecha de Inicio * (aaaa-mm-dd)</label>
+                        <input type="date" id="fecha_inicio_analisis" name="fecha_inicio" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha_fin_analisis">Fecha de Fin * (aaaa-mm-dd)</label>
+                        <input type="date" id="fecha_fin_analisis" name="fecha_fin" required>
+                    </div>
+                    
+                    <button type="button" class="btn" onclick="generarPDF('analisis_ventas')">📥 Generar PDF</button>
+                </form>
+            </div>
+            
+            <div class="result" id="result"></div>
+            
+            <div class="back-button">
+                <a href="{% url 'operaciones_sistema' %}" class="btn btn-secondary">← Volver a Operaciones</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Establecer fechas por defecto para análisis (último mes)
+        const today = new Date();
+        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        
+        document.getElementById('fecha_inicio_analisis').value = lastMonth.toISOString().split('T')[0];
+        document.getElementById('fecha_fin_analisis').value = today.toISOString().split('T')[0];
+        
+        function generarPDF(tipo) {
+            let data = {};
+            const resultDiv = document.getElementById('result');
+            
+            if (tipo === 'detalle_factura') {
+                const numeroFactura = document.getElementById('numero_factura').value;
+                if (!numeroFactura) {
+                    alert('Por favor ingresa el número de factura.');
+                    return;
+                }
+                
+                data = {
+                    'tipo': tipo,
+                    'numero_factura': numeroFactura
+                };
+            } else if (tipo === 'analisis_ventas') {
+                const fechaInicio = document.getElementById('fecha_inicio_analisis').value;
+                const fechaFin = document.getElementById('fecha_fin_analisis').value;
+                const subtipo = document.getElementById('subtipo').value;
+                
+                if (!fechaInicio || !fechaFin) {
+                    alert('Por favor completa ambas fechas.');
+                    return;
+                }
+                
+                if (fechaInicio > fechaFin) {
+                    alert('La fecha de inicio no puede ser mayor que la fecha de fin.');
+                    return;
+                }
+                
+                data = {
+                    'tipo': tipo,
+                    'subtipo': subtipo,
+                    'fecha_inicio': fechaInicio,
+                    'fecha_fin': fechaFin
+                };
+            }
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = '<strong>⏳ Generando PDF...</strong>';
+            
+            fetch('{% url "generar_pdf" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: new URLSearchParams(data)
+            })
+            .then(response => {
+                if (response.ok && response.headers.get('content-type')?.includes('application/pdf')) {
+                    return response.blob();
+                } else {
+                    return response.json().then(error => { throw new Error(error.mensaje || 'Error generando PDF'); });
+                }
+            })
+            .then(blob => {
+                // Crear enlace de descarga
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `reporte_${tipo}_${new Date().getTime()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = '<strong>✅ PDF generado y descargado exitosamente.</strong>';
+            })
+            .catch(error => {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+            });
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

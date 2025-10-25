@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operaciones del Sistema - Tecnologías Chapinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .operations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .operation-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .operation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .operation-card i {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        
+        .operation-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .operation-card p {
+            color: #7f8c8d;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .card-reset { border-left: 4px solid #e74c3c; }
+        .card-consultar { border-left: 4px solid #27ae60; }
+        .card-crear { border-left: 4px solid #f39c12; }
+        .card-facturacion { border-left: 4px solid #9b59b6; }
+        .card-reportes { border-left: 4px solid #1abc9c; }
+        
+        .result-section {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: none;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .data-table th {
+            background: #3498db;
+            color: white;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Operaciones del Sistema</h1>
+            <p>Gestión completa del sistema de facturación</p>
+        </div>
+        
+        <div class="operations-grid">
+            <div class="operation-card card-reset">
+                <div>🔄</div>
+                <h3>Inicializar Sistema</h3>
+                <p>Eliminar todos los datos y comenzar desde cero</p>
+                <button class="btn" onclick="inicializarSistema()">Ejecutar</button>
+            </div>
+            
+            <div class="operation-card card-consultar">
+                <div>📊</div>
+                <h3>Consultar Datos</h3>
+                <p>Ver información actual del sistema</p>
+                <select id="consultaTipo" class="btn" style="background: #27ae60; margin-bottom: 10px;">
+                    <option value="todos">Todos los datos</option>
+                    <option value="recursos">Recursos</option>
+                    <option value="categorias">Categorías</option>
+                    <option value="clientes">Clientes</option>
+                    <option value="consumos">Consumos</option>
+                    <option value="facturas">Facturas</option>
+                </select>
+                <button class="btn" onclick="consultarDatos()" style="background: #27ae60;">Consultar</button>
+            </div>
+            
+            <div class="operation-card card-crear">
+                <div>➕</div>
+                <h3>Crear Nuevos Datos</h3>
+                <p>Agregar nuevos elementos al sistema</p>
+                <select id="crearTipo" class="btn" style="background: #f39c12; margin-bottom: 10px;">
+                    <option value="recurso">Recurso</option>
+                    <option value="categoria">Categoría</option>
+                    <option value="configuracion">Configuración</option>
+                    <option value="cliente">Cliente</option>
+                    <option value="instancia">Instancia</option>
+                </select>
+                <button class="btn" style="background: #f39c12;" onclick="irACrear()">Crear</button>
+            </div>
+            
+            <div class="operation-card card-facturacion">
+                <div>🧾</div>
+                <h3>Proceso de Facturación</h3>
+                <p>Generar facturas por consumo de recursos</p>
+                <a href="{% url 'proceso_facturacion' %}" class="btn" style="background: #9b59b6;">Ir a Facturación</a>
+            </div>
+            
+            <div class="operation-card card-reportes">
+                <div>📈</div>
+                <h3>Reportes en PDF</h3>
+                <p>Generar reportes detallados en formato PDF</p>
+                <a href="{% url 'reportes_pdf' %}" class="btn" style="background: #1abc9c;">Generar Reportes</a>
+            </div>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <h3>Resultados de la Consulta</h3>
+            <div id="resultContent"></div>
+        </div>
+        
+        <div class="back-button">
+            <a href="{% url 'index' %}" class="btn btn-secondary">← Volver al Inicio</a>
+        </div>
+    </div>
+
+    <script>
+        function consultarDatos() {
+            const tipo = document.getElementById('consultaTipo').value;
+            const resultSection = document.getElementById('resultSection');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultContent.innerHTML = '<p>⏳ Cargando datos...</p>';
+            resultSection.style.display = 'block';
+
+            fetch(`{% url "consultar_datos" %}?tipo=${tipo}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Datos recibidos:", data);
+                
+                if (data.status === 200) {
+                    resultContent.innerHTML = formatData(data.datos, tipo);
+                } else {
+                    resultContent.innerHTML = `<p style="color: red;">❌ ${data.mensaje}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                resultContent.innerHTML = `
+                    <p style="color: red;">❌ Error al consultar datos: ${error.message}</p>
+                    <p>Verifica que el backend esté ejecutándose en http://localhost:4000</p>
+                `;
+            });
+        }
+        
+function inicializarSistema() {
+    if (confirm('¿Está seguro de que desea inicializar el sistema? Se perderán todos los datos.')) {
+        fetch('/inicializar_sistema/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.mensaje);
+            if (data.status === 200) {
+                // Recargar la página o actualizar datos
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al inicializar el sistema');
+        });
+    }
+}
+
+// Función auxiliar para obtener el token CSRF
+function getCSRFToken() {
+    const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+    return cookieValue || '';
+}
+
+        function formatData(datos, tipo) {
+
+            let html = '';
+            
+            if (tipo === 'todos' || tipo === 'recursos') {
+                if (datos.recursos && datos.recursos.length > 0) {
+                    html += '<h4>📦 Recursos</h4>';
+                    html += '<table class="data-table">';
+                    html += '<tr><th>ID</th><th>Nombre</th><th>Abreviatura</th><th>Métrica</th><th>Tipo</th><th>Valor x Hora</th></tr>';
+                    datos.recursos.forEach(recurso => {
+                        html += `<tr>
+                            <td>${recurso.id}</td>
+                            <td>${recurso.nombre}</td>
+                            <td>${recurso.abreviatura}</td>
+                            <td>${recurso.metrica}</td>
+                            <td>${recurso.tipo}</td>
+                            <td>Q ${parseFloat(recurso.valor_x_hora).toFixed(2)}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                } else {
+                    html += '<p>No hay recursos registrados.</p>';
+                }
+            }
+            
+            if (tipo === 'todos' || tipo === 'categorias') {
+                if (datos.categorias && datos.categorias.length > 0) {
+                    html += '<h4>📁 Categorías</h4>';
+                    datos.categorias.forEach(categoria => {
+                        html += `<div style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #3498db; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">`;
+                        html += `<h5 style="color: #2c3e50; margin-bottom: 8px;">${categoria.nombre} <small>(ID: ${categoria.id})</small></h5>`;
+                        html += `<p style="color: #7f8c8d; margin-bottom: 8px;"><strong>Descripción:</strong> ${categoria.descripcion}</p>`;
+                        html += `<p style="color: #7f8c8d;"><strong>Carga de trabajo:</strong> ${categoria.carga_trabajo}</p>`;
+                        
+                        if (categoria.configuraciones && categoria.configuraciones.length > 0) {
+                            html += '<h6 style="color: #34495e; margin: 15px 0 8px 0;">Configuraciones:</h6>';
+                            categoria.configuraciones.forEach(config => {
+                                html += `<div style="margin-left: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; margin-bottom: 8px;">`;
+                                html += `<strong>${config.nombre}</strong> (ID: ${config.id})<br>`;
+                                html += `<small style="color: #7f8c8d;">${config.descripcion}</small>`;
+                                
+                                if (config.recursos && Object.keys(config.recursos).length > 0) {
+                                    html += '<div style="margin-top: 8px;"><strong>Recursos:</strong><ul style="margin: 5px 0 0 20px;">';
+                                    for (const [recursoId, cantidad] of Object.entries(config.recursos)) {
+                                        html += `<li>Recurso ${recursoId}: ${cantidad} unidades</li>`;
+                                    }
+                                    html += '</ul></div>';
+                                }
+                                html += '</div>';
+                            });
+                        } else {
+                            html += '<p style="color: #95a5a6; font-style: italic;">No hay configuraciones en esta categoría.</p>';
+                        }
+                        html += '</div>';
+                    });
+                } else {
+                    html += '<p>No hay categorías registradas.</p>';
+                }
+            }
+            
+            if (tipo === 'todos' || tipo === 'clientes') {
+                if (datos.clientes && datos.clientes.length > 0) {
+                    html += '<h4>👥 Clientes</h4>';
+                    html += '<table class="data-table">';
+                    html += '<tr><th>NIT</th><th>Nombre</th><th>Usuario</th><th>Dirección</th><th>Email</th><th>Instancias</th></tr>';
+                    datos.clientes.forEach(cliente => {
+                        html += `<tr>
+                            <td>${cliente.nit}</td>
+                            <td>${cliente.nombre}</td>
+                            <td>${cliente.usuario}</td>
+                            <td>${cliente.direccion}</td>
+                            <td>${cliente.correo_electronico}</td>
+                            <td>${cliente.instancias ? cliente.instancias.length : 0}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    
+                    // Mostrar detalles de instancias si se seleccionó "todos"
+                    if (tipo === 'todos') {
+                        html += '<h5>Instancias por Cliente:</h5>';
+                        datos.clientes.forEach(cliente => {
+                            if (cliente.instancias && cliente.instancias.length > 0) {
+                                html += `<div style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px;">`;
+                                html += `<strong>${cliente.nombre} (${cliente.nit}):</strong><br>`;
+                                cliente.instancias.forEach(instancia => {
+                                    html += `<div style="margin-left: 20px; padding: 5px;">`;
+                                    html += `• ${instancia.nombre} (ID: ${instancia.id}) - ${instancia.estado}`;
+                                    html += ` - Inicio: ${instancia.fecha_inicio}`;
+                                    if (instancia.fecha_final) {
+                                        html += ` - Final: ${instancia.fecha_final}`;
+                                    }
+                                    html += `</div>`;
+                                });
+                                html += `</div>`;
+                            }
+                        });
+                    }
+                } else {
+                    html += '<p>No hay clientes registrados.</p>';
+                }
+            }
+            
+            if (tipo === 'todos' || tipo === 'consumos') {
+                if (datos.consumos && datos.consumos.length > 0) {
+                    html += '<h4>⚡ Consumos</h4>';
+                    html += '<table class="data-table">';
+                    html += '<tr><th>NIT Cliente</th><th>ID Instancia</th><th>Tiempo (h)</th><th>Fecha/Hora</th></tr>';
+                    datos.consumos.forEach(consumo => {
+                        html += `<tr>
+                            <td>${consumo.nit_cliente}</td>
+                            <td>${consumo.id_instancia}</td>
+                            <td>${parseFloat(consumo.tiempo).toFixed(2)}</td>
+                            <td>${consumo.fecha_hora || 'N/A'}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                } else {
+                    html += '<p>No hay consumos registrados.</p>';
+                }
+            }
+            
+            if (tipo === 'todos' || tipo === 'facturas') {
+                if (datos.facturas && datos.facturas.length > 0) {
+                    html += '<h4>🧾 Facturas</h4>';
+                    html += '<table class="data-table">';
+                    html += '<tr><th>Número</th><th>NIT Cliente</th><th>Fecha</th><th>Monto Total</th><th>Detalles</th></tr>';
+                    datos.facturas.forEach(factura => {
+                        html += `<tr>
+                            <td>${factura.numero}</td>
+                            <td>${factura.nit_cliente}</td>
+                            <td>${factura.fecha_factura}</td>
+                            <td>Q ${parseFloat(factura.monto_total).toFixed(2)}</td>
+                            <td>${factura.detalles ? factura.detalles.length : 0} items</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                } else {
+                    html += '<p>No hay facturas generadas.</p>';
+                }
+            }
+            
+            if (html === '') {
+                html = '<p>No hay datos disponibles para mostrar.</p>';
+            }
+            
+            return html;
+        }
+    
+        function irACrear() {
+            const tipo = document.getElementById('crearTipo').value;
+            console.log("Redirigiendo a crear:", tipo);
+            
+            // Construir la URL correcta
+            const url = `{% url 'crear_datos' %}?tipo=${tipo}`;
+            console.log("URL:", url);
+            
+            // Redirigir a la página de creación
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

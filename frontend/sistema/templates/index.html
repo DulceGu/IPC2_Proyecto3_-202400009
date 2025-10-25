@@ -1,31 +1,194 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tecnologías Chapinas, S.A.</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .menu { list-style: none; padding: 0; }
-        .menu li { margin: 10px 0; }
-        .menu a { 
-            display: block; 
-            padding: 15px; 
-            background: #007bff; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 5px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .menu a:hover { background: #0056b3; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #66c0ea 0%, #594ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .menu-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+        
+        .menu-card i {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+        
+        .menu-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .menu-card p {
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+        
+        .card-config {
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .card-consumo {
+            border-left: 4px solid #f39c12;
+        }
+        
+        .card-operaciones {
+            border-left: 4px solid #3498db;
+        }
+        
+        .card-ayuda {
+            border-left: 4px solid #27ae60;
+        }
+        
+        .status-bar {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #27ae60;
+        }
+        
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Tecnologías Chapinas, S.A.</h1>
-    <h2>Sistema de Facturación en la Nube</h2>
-    
-    <ul class="menu">
-        <li><a href="{% url 'enviar_configuracion' %}">Enviar Mensaje de Configuración</a></li>
-        <li><a href="{% url 'enviar_consumo' %}">Enviar Mensaje de Consumo</a></li>
-        <li><a href="{% url 'operaciones_sistema' %}">Operaciones del Sistema</a></li>
-        <li><a href="{% url 'ayuda' %}">Ayuda</a></li>
-    </ul>
+    <div class="container">
+        <div class="header">
+            <h1>Tecnologías Chapinas, S.A.</h1>
+            <p>Sistema de Facturación en la Nube - IPC2 Proyecto 3</p>
+        </div>
+        
+        <div class="menu-grid">
+            <a href="{% url 'enviar_configuracion' %}" class="menu-card card-config">
+                <div></div>
+                <h3>Enviar Configuración</h3>
+                <p>Cargar archivo XML con recursos, categorías, configuraciones, clientes e instancias</p>
+            </a>
+            
+            <a href="{% url 'enviar_consumo' %}" class="menu-card card-consumo">
+                <div></div>
+                <h3>Enviar Consumos</h3>
+                <p>Cargar archivo XML con consumos de recursos por instancias</p>
+            </a>
+            
+            <a href="{% url 'operaciones_sistema' %}" class="menu-card card-operaciones">
+                <div></div>
+                <h3>Operaciones del Sistema</h3>
+                <p>Gestionar datos, consultar información y realizar operaciones del sistema</p>
+            </a>
+            
+            <a href="{% url 'ayuda' %}" class="menu-card card-ayuda">
+                <div></div>
+                <h3>Ayuda e Información</h3>
+                <p>Información del estudiante y documentación del sistema</p>
+            </a>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>Sistema Operativo</span>
+            </div>
+            <div>Backend: {{ BACKEND_URL }}</div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar estado del backend
+        fetch('http://localhost:4000/')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Backend conectado:', data);
+            })
+            .catch(error => {
+                console.error('Error conectando al backend:', error);
+                alert('El backend no está disponible. Asegúrate de que el servidor Flask esté ejecutándose en el puerto 4000.');
+            });
+    </script>
 </body>
 </html>

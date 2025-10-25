@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Configuración - Tecnologías Chapinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #e74c3c;
+            background: #f9f9f9;
+        }
+        
+        .upload-area i {
+            font-size: 3em;
+            color: #bdc3c7;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .upload-area p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #c0392b;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .xml-example {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Enviar Configuración</h1>
+            <p>Cargar archivo XML con la configuración del sistema</p>
+        </div>
+        
+        <div class="content">
+            <div class="upload-area" id="uploadArea">
+                <div>📄</div>
+                <h3>Seleccionar Archivo XML</h3>
+                <p>Haz clic aquí o arrastra un archivo XML de configuración</p>
+                <p><small>Formatos aceptados: .xml</small></p>
+                <input type="file" id="fileInput" class="file-input" accept=".xml">
+            </div>
+            
+            <div class="file-info" id="fileInfo">
+                <strong>Archivo seleccionado:</strong> 
+                <span id="fileName"></span>
+                <br>
+                <strong>Tamaño:</strong> 
+                <span id="fileSize"></span>
+            </div>
+            
+            <button class="btn" id="uploadBtn" disabled>📤 Enviar Configuración</button>
+            
+            <div class="result" id="result"></div>
+            
+            <div class="xml-example">
+                <strong>Ejemplo de estructura XML esperada:</strong><br><br>
+                &lt;archivoConfiguraciones&gt;<br>
+                &nbsp;&nbsp;&lt;listaRecursos&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;recurso id="1"&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;nombre&gt;CPU Core&lt;/nombre&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;abreviatura&gt;CPU&lt;/abreviatura&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;metrica&gt;unidades&lt;/metrica&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tipo&gt;Hardware&lt;/tipo&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;valorXhora&gt;1.20&lt;/valorXhora&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;/recurso&gt;<br>
+                &nbsp;&nbsp;&lt;/listaRecursos&gt;<br>
+                &nbsp;&nbsp;&lt;listaCategorias&gt;...&lt;/listaCategorias&gt;<br>
+                &nbsp;&nbsp;&lt;listaClientes&gt;...&lt;/listaClientes&gt;<br>
+                &lt;/archivoConfiguraciones&gt;
+            </div>
+            
+            <div class="back-button">
+                <a href="{% url 'index' %}" class="btn btn-secondary">← Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const result = document.getElementById('result');
+
+        // Eventos para el área de upload - CORREGIDO
+        uploadArea.addEventListener('click', function(e) {
+            // Solo activar el file input si se hace clic directamente en el área de upload
+            // y no en elementos hijos
+            if (e.target === uploadArea || e.target.closest('.upload-area')) {
+                fileInput.click();
+            }
+        });
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.borderColor = '#e74c3c';
+            uploadArea.style.background = '#f9f9f9';
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.borderColor = '#bdc3c7';
+            uploadArea.style.background = 'white';
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelection(files[0]);
+            }
+            uploadArea.style.borderColor = '#bdc3c7';
+            uploadArea.style.background = 'white';
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelection(file) {
+            console.log("Archivo seleccionado:", file.name);
+            if (file.type === 'text/xml' || file.name.toLowerCase().endsWith('.xml')) {
+                fileName.textContent = file.name;
+                fileSize.textContent = (file.size / 1024).toFixed(2) + ' KB';
+                fileInfo.style.display = 'block';
+                uploadBtn.disabled = false;
+                
+                // Cambiar estilo del área de upload para indicar éxito
+                uploadArea.style.borderColor = '#27ae60';
+                uploadArea.style.background = '#f0fff4';
+            } else {
+                alert('❌ Por favor selecciona un archivo XML válido (extensión .xml).');
+                fileInput.value = '';
+                fileInfo.style.display = 'none';
+                uploadBtn.disabled = true;
+                uploadArea.style.borderColor = '#bdc3c7';
+                uploadArea.style.background = 'white';
+            }
+        }
+
+        uploadBtn.addEventListener('click', async function() {
+            if (!fileInput.files.length) {
+                alert('❌ Por favor selecciona un archivo primero.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('archivo_configuracion', fileInput.files[0]);
+
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '⏳ Enviando...';
+
+            try {
+                console.log("Enviando archivo al servidor...");
+                const response = await fetch('{% url "enviar_configuracion" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                // Verificar si la respuesta es JSON
+                const contentType = response.headers.get('content-type');
+                console.log("Tipo de contenido:", contentType);
+                console.log("Estado de respuesta:", response.status);
+
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    console.log("Respuesta JSON:", data);
+
+                    result.style.display = 'block';
+                    if (data.status === 200) {
+                        result.className = 'result success';
+                        let message = data.mensaje + '<br>';
+                        if (data.resultados) {
+                            message += `
+                                <br><strong>Resultados:</strong><br>
+                                • Recursos: ${data.resultados.recursos}<br>
+                                • Categorías: ${data.resultados.categorias}<br>
+                                • Configuraciones: ${data.resultados.configuraciones}<br>
+                                • Clientes: ${data.resultados.clientes}<br>
+                                • Instancias: ${data.resultados.instancias}
+                            `;
+                        }
+                        result.innerHTML = message;
+                        
+                        // Limpiar el formulario después de éxito
+                        fileInput.value = '';
+                        fileInfo.style.display = 'none';
+                        uploadBtn.disabled = true;
+                        uploadArea.style.borderColor = '#bdc3c7';
+                        uploadArea.style.background = 'white';
+                    } else {
+                        result.className = 'result error';
+                        let errorMessage = data.mensaje;
+                        if (data.detalles) {
+                            errorMessage += `<br><br><strong>Detalles técnicos:</strong><br><small>${data.detalles}</small>`;
+                        }
+                        result.innerHTML = errorMessage;
+                    }
+                } else {
+                    // Si no es JSON, mostrar el contenido crudo
+                    const text = await response.text();
+                    console.log("Respuesta no JSON:", text.substring(0, 200));
+                    result.className = 'result error';
+                    result.innerHTML = `
+                        <strong>❌ Error del servidor:</strong> El servidor devolvió una respuesta no JSON.<br>
+                        <strong>Estado:</strong> ${response.status}<br>
+                        <strong>Contenido:</strong><br>
+                        <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px; overflow: auto; max-height: 200px;">${escapeHtml(text.substring(0, 1000))}</pre>
+                    `;
+                    result.style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                result.className = 'result error';
+                result.innerHTML = `
+                    <strong>❌ Error de conexión:</strong> ${error.message}<br>
+                    <strong>Verifica que:</strong><br>
+                    • El backend esté ejecutándose en http://localhost:4000<br>
+                    • No haya errores en la consola del backend
+                `;
+                result.style.display = 'block';
+            }
+
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = '📤 Enviar Configuración';
+        });
+
+        // Función para escapar HTML
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Agregar estilos para mejor feedback visual
+        uploadArea.style.cursor = 'pointer';
+        uploadArea.style.transition = 'all 0.3s ease';
+    </script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda - Tecnologías Chapinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #9252a7 0%, #2c0849 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .help-section {
+            margin-bottom: 30px;
+        }
+        
+        .help-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .info-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #229954;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .student-info {
+            background: #e8f4fd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .student-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .xml-example {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-list li:before {
+            content: "✅";
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> A Ayuda e Información</h1>
+            <p>Documentación y información del sistema</p>
+        </div>
+        
+        <div class="content">
+            <div class="student-info">
+                <h3> Información del Estudiante</h3>
+                <button class="btn" onclick="mostrarInfoEstudiante()">Ver Información</button>
+                <div id="infoEstudiante" style="display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 5px;"></div>
+            </div>
+            
+            <div class="help-section">
+                <h3> Guía Rápida del Sistema</h3>
+                <div class="info-card">
+                    <h4>Flujo de Trabajo Recomendado:</h4>
+                    <ol style="padding-left: 20px; line-height: 1.6;">
+                        <li><strong>Configuración Inicial:</strong> Cargar archivo XML con recursos, categorías y clientes</li>
+                        <li><strong>Registro de Consumos:</strong> Cargar archivo XML con consumos de instancias</li>
+                        <li><strong>Gestión de Datos:</strong> Usar operaciones del sistema para consultar y crear datos</li>
+                        <li><strong>Facturación:</strong> Generar facturas por períodos de tiempo</li>
+                        <li><strong>Reportes:</strong> Generar PDFs con detalles y análisis</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <h3> Formatos XML Requeridos</h3>
+                
+                <div class="info-card">
+                    <h4>Configuración del Sistema</h4>
+                    <p>Estructura para recursos, categorías, configuraciones, clientes e instancias:</p>
+                    <div class="xml-example">
+&lt;archivoConfiguraciones&gt;<br>
+&nbsp;&nbsp;&lt;listaRecursos&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;recurso id="1"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;nombre&gt;CPU Core&lt;/nombre&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;abreviatura&gt;CPU&lt;/abreviatura&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;metrica&gt;unidades&lt;/metrica&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tipo&gt;Hardware&lt;/tipo&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;valorXhora&gt;1.20&lt;/valorXhora&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/recurso&gt;<br>
+&nbsp;&nbsp;&lt;/listaRecursos&gt;<br>
+&nbsp;&nbsp;&lt;listaCategorias&gt;...&lt;/listaCategorias&gt;<br>
+&nbsp;&nbsp;&lt;listaClientes&gt;...&lt;/listaClientes&gt;<br>
+&lt;/archivoConfiguraciones&gt;
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <h4>Consumos</h4>
+                    <p>Estructura para registro de consumos de instancias:</p>
+                    <div class="xml-example">
+&lt;listadoConsumos&gt;<br>
+&nbsp;&nbsp;&lt;consumo nitCliente="12345-6" idInstancia="1"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;tiempo&gt;5.5&lt;/tiempo&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;fechahora&gt;15/10/2025 14:30&lt;/fechahora&gt;<br>
+&nbsp;&nbsp;&lt;/consumo&gt;<br>
+&lt;/listadoConsumos&gt;
+                    </div>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <h3> Características del Sistema</h3>
+                <ul class="feature-list">
+                    <li>Gestión completa de recursos cloud</li>
+                    <li>Configuraciones por categorías</li>
+                    <li>Registro de clientes e instancias</li>
+                    <li>Seguimiento de consumos en tiempo real</li>
+                    <li>Generación automática de facturas</li>
+                    <li>Reportes detallados en PDF</li>
+                    <li>Interfaz web moderna y responsive</li>
+                    <li>API RESTful para integraciones</li>
+                    <li>Validación de datos y formatos</li>
+                    <li>Persistencia en archivos XML</li>
+                </ul>
+            </div>
+            
+            <div class="help-section">
+                <h3>Soporte Técnico</h3>
+                <div class="info-card">
+                    <h4>Problemas Comunes y Soluciones:</h4>
+                    <ul style="padding-left: 20px; line-height: 1.6;">
+                        <li><strong>Error de conexión al backend:</strong> Verificar que el servidor Flask esté ejecutándose en puerto 4000</li>
+                        <li><strong>Archivo XML inválido:</strong> Revisar la estructura y sintaxis del XML</li>
+                        <li><strong>Datos no persisten:</strong> Verificar permisos de escritura en la carpeta data/</li>
+                        <li><strong>Facturas no generadas:</strong> Confirmar que existan consumos en el período seleccionado</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="back-button">
+                <a href="{% url 'index' %}" class="btn btn-secondary">← Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function mostrarInfoEstudiante() {
+            const infoDiv = document.getElementById('infoEstudiante');
+            
+            if (infoDiv.style.display === 'none') {
+                fetch('{% url "info_estudiante" %}')
+                    .then(response => response.json())
+                    .then(data => {
+                        infoDiv.innerHTML = `
+                            <p><strong>Nombre:</strong> Dulce Maria Esperanza Gutierrez Caceres</p>
+                            <p><strong>Carnet:</strong> 202400009 </p>
+                            <p><strong>Curso:</strong> Laboratorio IPC 2</p>
+                            <p><strong>Proyecto:</strong> IPC2 - Proyecto 3</p>
+                            <p><strong>Institución:</strong> Universidad de San Carlos de Guatemala</p>
+                            <p><strong>Facultad:</strong> Ingeniería</p>
+                            <p><strong>Escuela:</strong> Ciencias y Sistemas</p>
+                        `;
+                        infoDiv.style.display = 'block';
+                    })
+                    .catch(error => {
+                        infoDiv.innerHTML = '<p style="color: red;">Error cargando información del estudiante.</p>';
+                        infoDiv.style.display = 'block';
+                    });
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

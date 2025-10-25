@@ -1,7 +1,7 @@
 from datetime import datetime
 
 class Factura:
-    def __init__(self, numero, nit_cliente, fecha_factura, monto_total):
+    def __init__(self, numero, nit_cliente, fecha_factura, monto_total=0):
         self.numero = numero
         self.nit_cliente = nit_cliente
         self.fecha_factura = fecha_factura
@@ -10,6 +10,8 @@ class Factura:
     
     def agregar_detalle(self, detalle):
         self.detalles.append(detalle)
+        # Actualizar monto total
+        self.monto_total += float(detalle.get('subtotal', 0))
     
     def to_dict(self):
         return {

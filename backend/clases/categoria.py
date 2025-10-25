@@ -7,7 +7,9 @@ class Categoria:
         self.configuraciones = []
     
     def agregar_configuracion(self, configuracion):
+        print(f"Agregando configuración '{configuracion.nombre}' a categoría '{self.nombre}'")
         self.configuraciones.append(configuracion)
+        print(f"Configuraciones en categoría {self.nombre}: {[c.nombre for c in self.configuraciones]}")
     
     def to_dict(self):
         return {

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proceso de Facturación - Tecnologías Chapinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            border-color: #9b59b6;
+            outline: none;
+        }
+        
+        .btn {
+            background: #9b59b6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            background: #8e44ad;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .facturas-list {
+            margin-top: 15px;
+        }
+        
+        .factura-item {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #9b59b6;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .info-box {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧾 Proceso de Facturación</h1>
+            <p>Generar facturas por consumo de recursos</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                <strong>💡 Información:</strong> 
+                Este proceso generará facturas para todos los clientes que tengan consumos 
+                no facturados en el rango de fechas especificado.
+            </div>
+            
+            <form id="facturacionForm">
+                <div class="form-group">
+                    <label for="fecha_inicio">Fecha de Inicio * (aaaa-mm-dd)</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha_fin">Fecha de Fin * (aaaa-mm-dd)</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin" required>
+                </div>
+            </form>
+            
+            <button class="btn" onclick="generarFacturas()">🧾 Generar Facturas</button>
+            
+            <div class="result" id="result"></div>
+            
+            <div class="back-button">
+                <a href="{% url 'operaciones_sistema' %}" class="btn btn-secondary">← Volver a Operaciones</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Establecer fechas por defecto (último mes)
+        const today = new Date();
+        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        
+        document.getElementById('fecha_inicio').value = lastMonth.toISOString().split('T')[0];
+        document.getElementById('fecha_fin').value = today.toISOString().split('T')[0];
+        
+        function generarFacturas() {
+            const fechaInicio = document.getElementById('fecha_inicio').value;
+            const fechaFin = document.getElementById('fecha_fin').value;
+            
+            if (!fechaInicio || !fechaFin) {
+                alert('Por favor completa ambas fechas.');
+                return;
+            }
+            
+            if (fechaInicio > fechaFin) {
+                alert('La fecha de inicio no puede ser mayor que la fecha de fin.');
+                return;
+            }
+            
+            const data = {
+                'fecha_inicio': fechaInicio,
+                'fecha_fin': fechaFin
+            };
+            
+            fetch('{% url "generar_factura" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: new URLSearchParams(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                
+                if (result.status === 200) {
+                    resultDiv.className = 'result success';
+                    let html = `<strong>✅ Éxito:</strong> ${result.mensaje}`;
+                    
+                    if (result.facturas_generadas && result.facturas_generadas.length > 0) {
+                        html += `<div class="facturas-list">`;
+                        html += `<h4>Facturas Generadas:</h4>`;
+                        result.facturas_generadas.forEach(factura => {
+                            html += `<div class="factura-item">`;
+                            html += `<strong>${factura.numero}</strong> - ${factura.cliente}`;
+                            html += `<br>Monto: Q ${parseFloat(factura.monto).toFixed(2)}`;
+                            html += `</div>`;
+                        });
+                        html += `</div>`;
+                    } else {
+                        html += `<p>No se generaron facturas en el período seleccionado.</p>`;
+                    }
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `<strong>❌ Error:</strong> ${result.mensaje}`;
+                }
+            })
+            .catch(error => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<strong>❌ Error de conexión:</strong> ${error.message}`;
+            });
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

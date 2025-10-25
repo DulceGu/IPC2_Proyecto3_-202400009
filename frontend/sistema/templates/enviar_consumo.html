@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Consumos - Tecnologías Chapinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #f39c12;
+            background: #f9f9f9;
+        }
+        
+        .upload-area i {
+            font-size: 3em;
+            color: #bdc3c7;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .upload-area p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #e67e22;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .xml-example {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Enviar Consumos</h1>
+            <p>Cargar archivo XML con consumos de recursos</p>
+        </div>
+        
+        <div class="content">
+            <div class="upload-area" id="uploadArea">
+                <div>📊</div>
+                <h3>Seleccionar Archivo XML de Consumos</h3>
+                <p>Haz clic aquí o arrastra un archivo XML de consumos</p>
+                <p><small>Formatos aceptados: .xml</small></p>
+                <input type="file" id="fileInput" class="file-input" accept=".xml">
+            </div>
+            
+            <div class="file-info" id="fileInfo">
+                <strong>Archivo seleccionado:</strong> 
+                <span id="fileName"></span>
+                <br>
+                <strong>Tamaño:</strong> 
+                <span id="fileSize"></span>
+            </div>
+            
+            <button class="btn" id="uploadBtn" disabled>📤 Enviar Consumos</button>
+            
+            <div class="result" id="result"></div>
+            
+            <div class="xml-example">
+                <strong>Ejemplo de estructura XML esperada:</strong><br><br>
+                &lt;listadoConsumos&gt;<br>
+                &nbsp;&nbsp;&lt;consumo nitCliente="12345-6" idInstancia="1"&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;tiempo&gt;5.5&lt;/tiempo&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;fechahora&gt;15/10/2025 14:30&lt;/fechahora&gt;<br>
+                &nbsp;&nbsp;&lt;/consumo&gt;<br>
+                &nbsp;&nbsp;&lt;consumo nitCliente="12345-6" idInstancia="2"&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;tiempo&gt;3.25&lt;/tiempo&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;fechahora&gt;15/10/2025 16:45&lt;/fechahora&gt;<br>
+                &nbsp;&nbsp;&lt;/consumo&gt;<br>
+                &lt;/listadoConsumos&gt;
+            </div>
+            
+            <div class="back-button">
+                <a href="{% url 'index' %}" class="btn btn-secondary">← Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const result = document.getElementById('result');
+
+        // Eventos para el área de upload
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#f39c12';
+            uploadArea.style.background = '#f9f9f9';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#bdc3c7';
+            uploadArea.style.background = 'white';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelection(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelection(file) {
+            if (file.type === 'text/xml' || file.name.endsWith('.xml')) {
+                fileName.textContent = file.name;
+                fileSize.textContent = (file.size / 1024).toFixed(2) + ' KB';
+                fileInfo.style.display = 'block';
+                uploadBtn.disabled = false;
+            } else {
+                alert('Por favor selecciona un archivo XML válido.');
+                fileInput.value = '';
+            }
+        }
+
+        uploadBtn.addEventListener('click', async () => {
+            if (!fileInput.files.length) return;
+
+            const formData = new FormData();
+            formData.append('archivo_consumo', fileInput.files[0]);
+
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Enviando...';
+
+            try {
+                const response = await fetch('{% url "enviar_consumo" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const data = await response.json();
+
+                result.style.display = 'block';
+                if (data.status === 200) {
+                    result.className = 'result success';
+                    let message = data.mensaje;
+                    if (data.consumos_procesados !== undefined) {
+                        message += `<br><strong>Consumos procesados:</strong> ${data.consumos_procesados}`;
+                    }
+                    result.innerHTML = message;
+                } else {
+                    result.className = 'result error';
+                    result.textContent = data.mensaje;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = 'Error de conexión: ' + error.message;
+                result.style.display = 'block';
+            }
+
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = '📤 Enviar Consumos';
+        });
+    </script>
+</body>
+</html>
